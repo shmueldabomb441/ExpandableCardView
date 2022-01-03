@@ -34,7 +34,7 @@ Or get the aar in the [Releases](https://github.com/Stjinchan/ExpandableCardView
 After you have the Library correctly setup, just declare the ExpandableCardView in your xml:
 
 ```xml
-<host.stjin.expandablecardview.ExpandableCardView
+<ExpandableCardView
     android:id="@+id/profile"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"

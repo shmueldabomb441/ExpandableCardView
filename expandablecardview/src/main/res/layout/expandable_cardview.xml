@@ -1,48 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/card_layout"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:paddingTop="@dimen/default_vertical_padding"
-    android:paddingBottom="@dimen/default_vertical_padding">
+    android:layout_margin="16dp">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/card_container"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/default_card_height"
+        android:layout_height="120dp"
         android:gravity="center_vertical"
-        android:orientation="vertical">
-
-        <RelativeLayout
+        android:orientation="vertical"
+        android:padding="8dp">
+        <!-- Rivedi effetto ripple -->
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/card_header"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/default_card_height"
-            android:gravity="center_vertical">
-
-            <!-- Rivedi effetto ripple -->
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <ImageButton
                 android:id="@+id/card_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
                 android:contentDescription="@string/expandable_card_view_icon_content_description"
-                android:visibility="gone" />
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/card_title"
-                android:layout_width="match_parent"
+                style="@style/TextAppearance.MaterialComponents.Headline6"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="8dp"
-                android:layout_toStartOf="@+id/LL_switch_button"
-                android:layout_toEndOf="@+id/card_icon"
+                android:layout_gravity="center"
                 android:maxLength="39"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:textSize="18sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 tools:text="Prova" />
 
             <LinearLayout
@@ -51,34 +51,61 @@
                 android:layout_height="match_parent"
                 android:layout_alignParentEnd="true"
                 android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
                 <com.google.android.material.switchmaterial.SwitchMaterial
                     android:id="@+id/card_switch"
                     style="@style/overrideExpandableCardViewSwitch"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp" />
+                    android:layout_height="wrap_content" />
 
-                <ImageButton
-                    android:id="@+id/card_arrow"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="20dp"
-                    android:background="?selectableItemBackgroundBorderless"
-                    android:contentDescription="@string/expandable_card_view_image_content_description"
-                    android:src="@drawable/arrow_down"
-                    android:tint="?attr/colorControlNormal" />
             </LinearLayout>
 
-        </RelativeLayout>
+            <ImageButton
+                android:id="@+id/card_arrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|end"
+                android:background="?selectableItemBackgroundBorderless"
+                android:contentDescription="@string/expandable_card_view_image_content_description"
+                android:src="@drawable/arrow_down"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="?attr/colorControlNormal" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/card_title">
+
+                <TextView
+                    android:id="@+id/new_material"
+                    style="@style/TextAppearance.MaterialComponents.Body2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Ma'aser Sheni 1:1 - Ma'aser Sheni 1:4\nMa'aser Sheni 1:1 - Ma'aser Sheni 1:4 " />
+
+                <TextView
+                    android:id="@+id/reviews"
+                    style="@style/TextAppearance.MaterialComponents.Body2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Peah 1:1 - Peah 1:4\nPeah 1:1 - Peah 1:4\nPeah 1:1 - Peah 1:4\nPeah 1:1 - Peah 1:4\nPeah 1:1 - Peah 1:4\nPeah 1:1 - Peah 1:4\n" />
+            </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <ViewStub
             android:id="@+id/card_stub"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:inflatedId="@+id/innerView" />
-
-
-    </LinearLayout>
+            android:layout_height="wrap_content"
+            android:inflatedId="@+id/innerView"
+            app:layout_constraintTop_toBottomOf="@id/card_header" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

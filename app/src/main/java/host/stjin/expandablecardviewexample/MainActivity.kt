@@ -27,23 +27,23 @@ class MainActivity : AppCompatActivity() {
         main_collapsing_toolbar_layout.setCollapsedTitleTextColor(Color.WHITE)
         main_collapsing_toolbar_layout.setExpandedTitleTextColor(ColorStateList.valueOf(Color.WHITE))
 
-        buttonMaps.setOnClickListener {
+        /*buttonMaps.setOnClickListener {
             val uri = Uri.parse("geo:25.7906500,-80.1300500?q=Miami Beach&z=10")
             intent = Intent(Intent.ACTION_VIEW, uri)
             startActivity(intent)
-        }
+        }*/
 
         main_profile_card.setOnExpandedListener { _, isExpanded ->
             if(isExpanded) Toast.makeText(applicationContext, "Expanded!", Toast.LENGTH_SHORT).show()
             else Toast.makeText(applicationContext, "Collapsed!", Toast.LENGTH_SHORT).show()
         }
-
+/*
         main_location.setOnSwitchChangeListener { _, isChecked ->
             if(isChecked) Toast.makeText(applicationContext, "Checked!", Toast.LENGTH_SHORT).show()
             else Toast.makeText(applicationContext, "not checked!", Toast.LENGTH_SHORT).show()
         }
 
-        main_location.setSwitch(true)
+        main_location.setSwitch(true)*/
     }
 
 

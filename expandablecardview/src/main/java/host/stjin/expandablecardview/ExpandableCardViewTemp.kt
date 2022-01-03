@@ -8,19 +8,21 @@ import android.graphics.drawable.Drawable
 import android.os.Handler
 import android.text.TextUtils
 import android.util.AttributeSet
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.view.animation.RotateAnimation
 import android.view.animation.Transformation
 import android.widget.CompoundButton
 import android.widget.LinearLayout
-import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import kotlinx.android.synthetic.main.expandable_cardview.view.*
 
 
@@ -46,8 +48,13 @@ import kotlinx.android.synthetic.main.expandable_cardview.view.*
  * Modified by Stjin on 01/02/2020.
  * @author Alessandro Sperotti
  */
+val TAG = "mExpandableCardView"
 
-class ExpandableCardView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : LinearLayout(context, attrs, defStyleAttr) {
+class ExpandableCardViewTemp @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : LinearLayout(context, attrs, defStyleAttr) {
 
     private var title: String? = null
 
@@ -89,7 +96,8 @@ class ExpandableCardView @JvmOverloads constructor(context: Context, attrs: Attr
             expand()
     }
 
-    private val switchOnCheckedChangeListener = CompoundButton.OnCheckedChangeListener { p0, p1 -> switchListener?.onSwitchChanged(p0, p1) }
+    private val switchOnCheckedChangeListener =
+        CompoundButton.OnCheckedChangeListener { p0, p1 -> switchListener?.onSwitchChanged(p0, p1) }
 
     private val isMoving: Boolean
         get() = isExpanding || isCollapsing
@@ -105,29 +113,97 @@ class ExpandableCardView @JvmOverloads constructor(context: Context, attrs: Attr
     private fun initView(context: Context) {
         //Inflating View
         LayoutInflater.from(context).inflate(R.layout.expandable_cardview, this)
+            .apply {
+                Log.d("mExpandableCardView", "reviews.bottom: ${reviews.bottom}")
+                reviews.viewTreeObserver.addOnGlobalLayoutListener(object :
+                    ViewTreeObserver.OnGlobalLayoutListener {
+                    override fun onGlobalLayout() {
+                        Log.d("mExpandableCardView", "reviews.bottom: ${reviews.bottom}")
+//                    val heightDistributedAmongAll4 = Utils.convertDpToPixels(context, 200F).toInt()
+//                    card_container.layoutParams.height = reviews.bottom + 300
+                        new_material.viewTreeObserver.addOnGlobalLayoutListener(object :
+                            ViewTreeObserver.OnGlobalLayoutListener {
+                            override fun onGlobalLayout() {
+                                card_container.viewTreeObserver.addOnGlobalLayoutListener(object :
+                                    ViewTreeObserver.OnGlobalLayoutListener {
+                                    override fun onGlobalLayout() {
+                                        val newMaterialHeight = new_material.height
+                                        val reviewHeight = reviews.height
+                                        val margin = Utils.convertDpToPixels(context, 8F)
+                                        Log.d(
+                                            TAG,
+                                            "before card_header.height = ${card_container.height}, margin: $margin, new height: $newMaterialHeight, review height: $reviewHeight"
+                                        )
+                                        val c = card_container.layoutParams
+                                        val toInt =
+                                            (newMaterialHeight + margin + reviewHeight + margin).toInt()
+                                        Log.d(TAG, "Height to set: $toInt")
+                                        c.height = toInt
+                                        card_container.layoutParams = c
+                                        Log.d(
+                                            TAG,
+                                            "after card_header.height = ${card_container.height}, margin: $margin, new height: $newMaterialHeight, review height: $reviewHeight"
+                                        )
+                                        card_container.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                                    }
+                                })
+                                new_material.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                            }
+                        })
+                        reviews.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                    }
+                })
+                card_container.requestLayout()
+
+//                    header_ll.layoutParams.height = heightDistributedAmongAll4
+//                    header_cl.layoutParams.height = heightDistributedAmongAll4
+//                    reviews.viewTreeObserver.removeGlobalOnLayoutListener(this)
+            }
     }
 
     private fun initAttributes(context: Context, attrs: AttributeSet) {
         //Ottengo attributi
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.ExpandableCardView)
-        this@ExpandableCardView.typedArray = typedArray
+        this@ExpandableCardViewTemp.typedArray = typedArray
         title = typedArray.getString(R.styleable.ExpandableCardView_title)
         iconDrawable = typedArray.getDrawable(R.styleable.ExpandableCardView_icon)
-        innerViewRes = typedArray.getResourceId(R.styleable.ExpandableCardView_inner_view, View.NO_ID)
+        innerViewRes =
+            typedArray.getResourceId(R.styleable.ExpandableCardView_inner_view, View.NO_ID)
         expandOnClick = typedArray.getBoolean(R.styleable.ExpandableCardView_expandOnClick, false)
         showSwitch = typedArray.getBoolean(R.styleable.ExpandableCardView_showSwitch, false)
-        animDuration = typedArray.getInteger(R.styleable.ExpandableCardView_animationDuration, DEFAULT_ANIM_DURATION).toLong()
+        animDuration = typedArray.getInteger(
+            R.styleable.ExpandableCardView_animationDuration,
+            DEFAULT_ANIM_DURATION
+        ).toLong()
         startExpanded = typedArray.getBoolean(R.styleable.ExpandableCardView_startExpanded, false)
-        cardRipple = typedArray.getBoolean(R.styleable.ExpandableCardView_expandableCardRipple, false)
-        expandableCardTitleBold = typedArray.getBoolean(R.styleable.ExpandableCardView_expandableCardTitleBold, false)
-        cardColor = typedArray.getInteger(R.styleable.ExpandableCardView_expandableCardColor, android.R.color.transparent)
-        cardStrokeColor = typedArray.getInteger(R.styleable.ExpandableCardView_expandableCardStrokeColor, android.R.color.transparent)
-        cardArrowColor = typedArray.getInteger(R.styleable.ExpandableCardView_expandableCardArrowColor, android.R.color.black)
-        cardStrokeWidth = typedArray.getDimension(R.styleable.ExpandableCardView_expandableCardStrokeWidth, 0f)
-        cardTitleSize = typedArray.getDimension(R.styleable.ExpandableCardView_expandableCardTitleSize, 0f)
-        cardElevation = typedArray.getDimension(R.styleable.ExpandableCardView_expandableCardElevation, 4f)
-        cardRadius = typedArray.getDimension(R.styleable.ExpandableCardView_expandableCardRadius, 4f)
-        cardTextColor = typedArray.getInteger(R.styleable.ExpandableCardView_expandableCardTitleColor, android.R.color.darker_gray)
+        cardRipple =
+            typedArray.getBoolean(R.styleable.ExpandableCardView_expandableCardRipple, false)
+        expandableCardTitleBold =
+            typedArray.getBoolean(R.styleable.ExpandableCardView_expandableCardTitleBold, false)
+        cardColor = typedArray.getInteger(
+            R.styleable.ExpandableCardView_expandableCardColor,
+            android.R.color.transparent
+        )
+        cardStrokeColor = typedArray.getInteger(
+            R.styleable.ExpandableCardView_expandableCardStrokeColor,
+            android.R.color.transparent
+        )
+        cardArrowColor = typedArray.getInteger(
+            R.styleable.ExpandableCardView_expandableCardArrowColor,
+            android.R.color.black
+        )
+        cardStrokeWidth =
+            typedArray.getDimension(R.styleable.ExpandableCardView_expandableCardStrokeWidth, 0f)
+        cardTitleSize =
+            typedArray.getDimension(R.styleable.ExpandableCardView_expandableCardTitleSize, 0f)
+        cardElevation =
+            typedArray.getDimension(R.styleable.ExpandableCardView_expandableCardElevation, 4f)
+        cardRadius =
+            typedArray.getDimension(R.styleable.ExpandableCardView_expandableCardRadius, 4f)
+        cardTextColor = typedArray.getInteger(
+            R.styleable.ExpandableCardView_expandableCardTitleColor,
+            android.R.color.darker_gray
+        )
 
         typedArray.recycle()
     }
@@ -138,13 +214,12 @@ class ExpandableCardView @JvmOverloads constructor(context: Context, attrs: Attr
 
         //Setting attributes
         if (!TextUtils.isEmpty(title)) card_title.text = title
-        if (cardTextColor != android.R.color.darker_gray) card_title.setTextColor(cardTextColor)
-        if (cardStrokeColor != android.R.color.transparent) card_layout.strokeColor = cardStrokeColor
+        if (cardStrokeColor != android.R.color.transparent) card_layout.strokeColor =
+            ResourcesCompat.getColor(resources, cardStrokeColor, context.theme)
         if (cardColor != android.R.color.transparent) card_layout.setCardBackgroundColor(cardColor)
         if (cardStrokeWidth != 0f) card_layout.strokeWidth = cardStrokeWidth.toInt()
-        if (cardTitleSize != 0f) card_title.textSize = cardTitleSize / density
-        if (!cardRipple) card_layout.rippleColor = ContextCompat.getColorStateList(context, android.R.color.transparent)
-
+        if (!cardRipple) card_layout.rippleColor =
+            ContextCompat.getColorStateList(context, android.R.color.transparent)
         if (expandableCardTitleBold) {
             card_title.setTypeface(null, Typeface.BOLD)
         }
@@ -154,12 +229,14 @@ class ExpandableCardView @JvmOverloads constructor(context: Context, attrs: Attr
         card_layout.cardElevation = cardElevation
 
 
-        if (cardArrowColor != android.R.color.black) card_arrow.setColorFilter(cardArrowColor, android.graphics.PorterDuff.Mode.SRC_IN)
+        if (cardArrowColor != android.R.color.black) card_arrow.setColorFilter(
+            cardArrowColor,
+            android.graphics.PorterDuff.Mode.SRC_IN
+        )
 
 
         iconDrawable?.let { drawable ->
             card_header.visibility = View.VISIBLE
-            card_icon.setImageDrawable(drawable)
         }
 
         setInnerView(innerViewRes)
@@ -193,9 +270,11 @@ class ExpandableCardView @JvmOverloads constructor(context: Context, attrs: Attr
         val targetHeight = getFullHeight(card_layout)
 
         if (targetHeight - initialHeight != 0) {
-            animateViews(initialHeight,
-                    targetHeight - initialHeight,
-                    EXPANDING)
+            animateViews(
+                initialHeight,
+                targetHeight - initialHeight,
+                EXPANDING
+            )
         }
     }
 
@@ -216,11 +295,13 @@ class ExpandableCardView @JvmOverloads constructor(context: Context, attrs: Attr
         for (i in 0 until numberOfChildren) {
             val child = layout.getChildAt(i)
 
-            val desiredWidth = MeasureSpec.makeMeasureSpec(layout.width,
-                    MeasureSpec.AT_MOST)
+            val desiredWidth = MeasureSpec.makeMeasureSpec(
+                layout.width,
+                MeasureSpec.AT_MOST
+            )
             child.measure(desiredWidth, MeasureSpec.UNSPECIFIED)
             child.measuredHeight
-            totalHeight+=child.measuredHeight
+            totalHeight += child.measuredHeight
         }
         layout.visibility = initialVisibility
         return totalHeight
@@ -229,9 +310,11 @@ class ExpandableCardView @JvmOverloads constructor(context: Context, attrs: Attr
     fun collapse() {
         val initialHeight = card_layout.measuredHeight
         if (initialHeight - previousHeight != 0) {
-            animateViews(initialHeight,
-                    initialHeight - previousHeight,
-                    COLLAPSING)
+            animateViews(
+                initialHeight,
+                initialHeight - previousHeight,
+                COLLAPSING
+            )
         }
     }
 
@@ -272,11 +355,15 @@ class ExpandableCardView @JvmOverloads constructor(context: Context, attrs: Attr
         }
 
         val arrowAnimation = if (animationType == EXPANDING)
-            RotateAnimation(0f, 180f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
-                    0.5f)
+            RotateAnimation(
+                0f, 180f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
+                0.5f
+            )
         else
-            RotateAnimation(180f, 0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
-                    0.5f)
+            RotateAnimation(
+                180f, 0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
+                0.5f
+            )
 
         arrowAnimation.fillAfter = true
 
@@ -309,11 +396,13 @@ class ExpandableCardView @JvmOverloads constructor(context: Context, attrs: Attr
                 }
 
                 override fun onAnimationEnd(p0: Animation?) {
-                    card_switch.visibility = if (animationType != EXPANDING) View.VISIBLE else View.GONE
+                    card_switch.visibility =
+                        if (animationType != EXPANDING) View.VISIBLE else View.GONE
                 }
 
                 override fun onAnimationStart(p0: Animation?) {
-                    card_switch.visibility = if (animationType != EXPANDING) View.INVISIBLE else View.VISIBLE
+                    card_switch.visibility =
+                        if (animationType != EXPANDING) View.INVISIBLE else View.VISIBLE
                 }
             })
         }
@@ -361,22 +450,11 @@ class ExpandableCardView @JvmOverloads constructor(context: Context, attrs: Attr
             card_title.text = titleText
     }
 
-    fun setIcon(@DrawableRes drawableRes: Int = -1, drawable: Drawable? = null) {
-        if (drawableRes != -1) {
-            iconDrawable = ContextCompat.getDrawable(context, drawableRes)
-            card_icon.setImageDrawable(iconDrawable)
-        } else {
-            card_icon.setImageDrawable(iconDrawable)
-            iconDrawable = drawable
-        }
-
-    }
-
-    fun setSwitch(boolean: Boolean){
+    fun setSwitch(boolean: Boolean) {
         card_switch.isChecked = boolean
     }
 
-    fun setSwitchEnabled(boolean: Boolean){
+    fun setSwitchEnabled(boolean: Boolean) {
         card_switch.isEnabled = boolean
     }
 

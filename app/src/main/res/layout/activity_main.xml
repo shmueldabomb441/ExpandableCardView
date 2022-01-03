@@ -46,28 +46,23 @@
         android:orientation="vertical"
         android:paddingBottom="20dp">
 
-        <host.stjin.expandablecardview.ExpandableCardView
+        <host.stjin.expandablecardview.ExpandableCardViewTemp
             android:id="@+id/main_profile_card"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginBottom="10dp"
             app:expandOnClick="true"
-            app:startExpanded="true"
+            app:startExpanded="false"
             app:expandableCardRipple="true"
             app:expandableCardRadius="6dp"
             app:expandableCardStrokeWidth="1dp"
             app:expandableCardElevation="4dp"
-            app:expandableCardStrokeColor="@color/colorAccent"
             app:expandableCardArrowColor="@color/colorAccent"
-            app:animationDuration="900"
+            app:animationDuration="600"
             app:icon="@drawable/ic_person"
             app:inner_view="@layout/passengers"
-            app:title="Passengers" />
+            app:title="Mon Jan 03 2022" />
 
-        <host.stjin.expandablecardview.ExpandableCardView
+       <!-- <host.stjin.expandablecardview.ExpandableCardViewTemp
             android:id="@+id/main_location"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -86,7 +81,7 @@
             app:showSwitch="true"
             app:title="Location" />
 
-        <host.stjin.expandablecardview.ExpandableCardView
+        <host.stjin.expandablecardview.ExpandableCardViewTemp
             android:id="@+id/main_dates"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -102,7 +97,7 @@
             app:inner_view="@layout/dates"
             app:title="Calendar" />
 
-        <host.stjin.expandablecardview.ExpandableCardView
+        <host.stjin.expandablecardview.ExpandableCardViewTemp
             android:id="@+id/main_test"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -115,7 +110,7 @@
             app:showSwitch="true"
             app:icon="@drawable/ic_dates"
             app:inner_view="@layout/test"
-            app:title="Lorem" />
+            app:title="Lorem" />-->
 
     </LinearLayout>
 
