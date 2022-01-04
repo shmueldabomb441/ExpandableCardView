@@ -20,6 +20,7 @@ import android.view.animation.RotateAnimation
 import android.view.animation.Transformation
 import android.widget.CompoundButton
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
@@ -115,7 +116,8 @@ class ExpandableCardViewTemp @JvmOverloads constructor(
         LayoutInflater.from(context).inflate(R.layout.expandable_cardview, this)
             .apply {
                 Log.d("mExpandableCardView", "reviews.bottom: ${reviews.bottom}")
-                reviews.viewTreeObserver.addOnGlobalLayoutListener(object :
+                //My messing around with layoutParams
+                /*reviews.viewTreeObserver.addOnGlobalLayoutListener(object :
                     ViewTreeObserver.OnGlobalLayoutListener {
                     override fun onGlobalLayout() {
                         Log.d("mExpandableCardView", "reviews.bottom: ${reviews.bottom}")
@@ -127,8 +129,8 @@ class ExpandableCardViewTemp @JvmOverloads constructor(
                                 card_container.viewTreeObserver.addOnGlobalLayoutListener(object :
                                     ViewTreeObserver.OnGlobalLayoutListener {
                                     override fun onGlobalLayout() {
-                                        val newMaterialHeight = new_material.height
-                                        val reviewHeight = reviews.height
+                                        val newMaterialHeight = new_material.baseline
+                                        val reviewHeight = reviews.baseline
                                         val margin = Utils.convertDpToPixels(context, 8F)
                                         Log.d(
                                             TAG,
@@ -138,7 +140,7 @@ class ExpandableCardViewTemp @JvmOverloads constructor(
                                         val toInt =
                                             (newMaterialHeight + margin + reviewHeight + margin).toInt()
                                         Log.d(TAG, "Height to set: $toInt")
-                                        c.height = toInt
+                                        c.height = reviews.baseline
                                         card_container.layoutParams = c
                                         Log.d(
                                             TAG,
@@ -153,7 +155,7 @@ class ExpandableCardViewTemp @JvmOverloads constructor(
                         reviews.viewTreeObserver.removeOnGlobalLayoutListener(this)
                     }
                 })
-                card_container.requestLayout()
+                card_container.requestLayout()*/
 
 //                    header_ll.layoutParams.height = heightDistributedAmongAll4
 //                    header_cl.layoutParams.height = heightDistributedAmongAll4
